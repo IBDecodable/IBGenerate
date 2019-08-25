@@ -9,7 +9,7 @@ import Foundation
 import IBDecodable
 
 struct Natalie {
-    
+
     struct Header: CustomStringConvertible {
         var description: String {
             var output = String()
@@ -19,31 +19,31 @@ struct Natalie {
             return output
         }
     }
-    
+
     let storyboards: [StoryboardFile]
     let header = Header()
-    
+
     var storyboardCustomModules: Set<String> {
         return Set(storyboards.lazy.flatMap { $0.document.customModules })
     }
-    
+
     init(storyboards: [StoryboardFile]) {
         self.storyboards = storyboards
         assert(Set(storyboards.map { $0.document.targetRuntime.os }).count < 2)
     }
-    
+
     static func process(storyboards: [StoryboardFile]) -> String {
         var output = String()
         for os in OS.allValues {
             let storyboardsForOS = storyboards.filter { $0.document.targetRuntime.os == os }
             if !storyboardsForOS.isEmpty {
-                
+
                 if storyboardsForOS.count != storyboards.count {
                     output += "#if os(\(os.rawValue))\n"
                 }
-                
+
                 output += Natalie(storyboards: storyboardsForOS).process(os: os)
-                
+
                 if storyboardsForOS.count != storyboards.count {
                     output += "#endif\n"
                 }
@@ -51,10 +51,10 @@ struct Natalie {
         }
         return output
     }
-    
+
     func process(os: OS) -> String {
         var output = ""
-        
+
         output += header.description
         output += "import \(os.framework)\n"
         output += "import IBStoryboard\n"
@@ -70,7 +70,7 @@ struct Natalie {
         }
         output += "}\n"
         output += "\n"
-        
+
         let colors = storyboards
             .flatMap { $0.document.colors }
             .filter {
@@ -97,7 +97,7 @@ struct Natalie {
         for file in storyboards {
             output += file.document.processViewControllers(storyboardCustomModules: storyboardModules)
         }
-        
+
         return output
     }
 }

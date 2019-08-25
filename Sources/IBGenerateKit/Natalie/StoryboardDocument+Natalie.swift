@@ -9,10 +9,10 @@ import Foundation
 import IBDecodable
 
 extension StoryboardDocument {
-    
+
     func processStoryboard(storyboardName: String, os: OS) -> String {
         var output = String()
-        
+
         output += "\n"
         output += "    struct \(storyboardName): Storyboard {\n"
         output += "\n"
@@ -34,7 +34,7 @@ extension StoryboardDocument {
             output += "        static func instantiate\(signatureType)(withIdentifier identifier: \(os.storyboardSceneIdentifierType)) -> \(returnType) {\n"
             output += "            return self.storyboard.instantiate\(signatureType)(withIdentifier: identifier)\(cast)\n"
             output += "        }\n"
-            
+
             output += "\n"
             output += "        static func instantiateViewController<T: \(returnType)>(ofType type: T.Type) -> T? where T: IdentifiableProtocol {\n"
             output += "            return self.storyboard.instantiateViewController(ofType: type)\n"
@@ -43,7 +43,7 @@ extension StoryboardDocument {
         for scene in self.scenes ?? [] {
             if let viewController = scene.viewController, let storyboardIdentifier = viewController.viewController.storyboardIdentifier {
                 let controllerClass = viewController.viewController.customClass ?? viewController.viewController.elementClass
-                
+
                 let cast = (controllerClass == os.storyboardControllerReturnType ? "" : " as! \(controllerClass)")
                 output += "\n"
                 output += "        static func instantiate\(swiftRepresentation(for: storyboardIdentifier, firstLetter: .capitalize))() -> \(controllerClass) {\n"
@@ -52,10 +52,10 @@ extension StoryboardDocument {
             }
         }
         output += "    }\n"
-        
+
         return output
     }
-    
+
     func initIdentifier(for identifierString: String, value: String) -> String {
         if identifierString == "String" {
             return "\"\(value)\""
@@ -63,16 +63,16 @@ extension StoryboardDocument {
             return "\(identifierString)(\"\(value)\")"
         }
     }
-    
+
     func processViewControllers(storyboardCustomModules: Set<String>) -> String {
         var output = String()
-        
+
         for scene in self.scenes ?? [] {
             if let viewController = scene.viewController?.viewController {
                 if let customClass = viewController.customClass {
                     output += "\n"
                     output += "// MARK: - \(customClass)\n"
-                    
+
                     if let segues = scene.segues?.filter({ return $0.identifier != nil }), !segues.isEmpty {
                         output += "extension \(os.storyboardSegueType) {\n"
                         output += "    func selection() -> \(customClass).Segue? {\n"
@@ -83,21 +83,21 @@ extension StoryboardDocument {
                         output += "    }\n"
                         output += "}\n"
                     }
-                    
+
                     if let storyboardIdentifier = viewController.storyboardIdentifier {
                         output += "protocol \(customClass)IdentifiableProtocol: IdentifiableProtocol { }\n"
                         output += "\n"
                         output += "extension \(customClass): \(customClass)IdentifiableProtocol { }\n"
                         output += "\n"
                         output += "extension IdentifiableProtocol where Self: \(customClass) {\n"
-                        
+
                         let initIdentifierString = initIdentifier(for: os.storyboardSceneIdentifierType, value: storyboardIdentifier)
-                        
+
                         var isCurrentModule = false
                         if let customModule = viewController.customModule {
                             isCurrentModule = !storyboardCustomModules.contains(customModule)
                         }
-                        
+
                         if isCurrentModule {
                             // Accessors for view controllers defined in the current module should be "internal".
                             output += "    var storyboardIdentifier: \(os.storyboardSceneIdentifierType)? { return \(initIdentifierString) }\n"
@@ -108,7 +108,7 @@ extension StoryboardDocument {
                         output += "    static var storyboardIdentifier: \(os.storyboardSceneIdentifierType)? { return \(initIdentifierString) }\n"
                         output += "}\n"
                     }
-                    
+
                     if let segues = scene.segues?.filter({ return $0.identifier != nil }), !segues.isEmpty {
                         output += "extension \(customClass) {\n"
                         output += "\n"
@@ -171,9 +171,9 @@ extension StoryboardDocument {
                         output += "\n"
                         output += "}\n"
                     }
-                    
+
                     if let reusables = viewController.reusables?.filter({ return $0.reuseIdentifier != nil }), !reusables.isEmpty {
-                        
+
                         output += "extension \(customClass) {\n"
                         output += "\n"
                         output += "    enum Reusable: String, CustomStringConvertible, ReusableViewProtocol {\n"
@@ -234,7 +234,7 @@ extension StoryboardDocument {
 }
 
 extension IBElement {
-  
+
     func searchById(id: String) -> ViewController? {
         if let element: ViewController = with(id: id) {
             return element

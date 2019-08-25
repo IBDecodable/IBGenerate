@@ -11,7 +11,7 @@ enum FirstLetterFormat {
     case none
     case capitalize
     case lowercase
-    
+
     func format(_ str: String) -> String {
         switch self {
         case .none:

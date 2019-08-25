@@ -12,15 +12,15 @@ extension StoryboardDocument {
     var os: OS {
         return targetRuntime.os
     }
-    
+
     var colors: [Color] {
         return self.children(of: Color.self, recursive: true)
     }
-    
+
     var customModules: Set<String> {
         return Set((self.scenes ?? []).filter { $0.customModule != nil && $0.customModuleProvider == nil }.map { $0.customModule! })
     }
-    
+
     var initialViewControllerClass: String? {
         guard let id = self.initialViewController else {
             return nil
@@ -31,7 +31,7 @@ extension StoryboardDocument {
             if let customClassName = vc.customClassWithModule {
                 return customClassName
             }
-            
+
             return vc.elementClass
         }
         return nil
@@ -65,14 +65,14 @@ extension AnyViewController {
 }
 
 extension ViewControllerProtocol {
-    var reusables: [Reusable]?   {
+    var reusables: [Reusable]? {
         var reusables: [Reusable] = []
         reusables.append(contentsOf: self.children(of: CollectionViewCell.self, recursive: true))
         reusables.append(contentsOf: self.children(of: TableViewCell.self, recursive: true))
         return reusables
     }
-    
-    var customClassWithModule: String?   {
+
+    var customClassWithModule: String? {
         if let className = self.customClass {
             if let moduleName = self.customModule, customModuleProvider != "target" {
                 return "\(moduleName).\(className)"
@@ -94,18 +94,16 @@ extension IBReusable {
     var kind: String {
         if self is CollectionViewCell {
             return "collectionViewCell"
-        }
-        else if self is TableViewCell {
+        } else if self is TableViewCell {
             return "tableViewCell"
-        }
-        else {
+        } else {
             return ""
         } // XXX maybe lowercase the class (or keep in IBDecodable the xml element name
     }
 }
 
 extension Color {
-    
+
     var assetName: String? {
         switch self {
         case .name(let name):

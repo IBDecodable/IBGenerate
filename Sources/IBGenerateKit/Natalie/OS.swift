@@ -3,12 +3,12 @@ import IBDecodable
 extension OS {
 
     static let allValues = [iOS]
-    
+
     enum Runtime: String {
         case iOSCocoaTouch = "iOS.CocoaTouch"
         case MacmacOSCocoa = "MacmacOS.Cocoa"
         case AppleTV = "AppleTV"
-        
+
         init(os: OS) {
             switch os {
             case iOS:
@@ -20,11 +20,11 @@ extension OS {
             }
         }
     }
-    
+
     enum Framework: String {
         case UIKit = "UIKit"
         case Cocoa = "Cocoa"
-        
+
         init(os: OS) {
             switch os {
             case iOS, .tvOS:
@@ -38,15 +38,15 @@ extension OS {
     var description: String {
         return self.rawValue
     }
-    
+
     var framework: String {
         return Framework(os: self).rawValue
     }
-    
+
     var targetRuntime: String {
         return Runtime(os: self).rawValue
     }
-    
+
     var storyboardType: String {
         switch self {
         case .iOS, .tvOS:
@@ -55,7 +55,7 @@ extension OS {
             return "NSStoryboard"
         }
     }
-    
+
     var storyboardIdentifierType: String {
         switch self {
         case .iOS, .tvOS:
@@ -100,7 +100,7 @@ extension OS {
             return ["NSViewController", "NSWindowController"]
         }
     }
-    
+
     var storyboardControllerReturnType: String {
         switch self {
         case .iOS, .tvOS:
@@ -109,7 +109,7 @@ extension OS {
             return "AnyObject" // NSViewController or NSWindowController
         }
     }
-    
+
     var storyboardControllerSignatureType: String {
         switch self {
         case .iOS, .tvOS:
@@ -118,7 +118,7 @@ extension OS {
             return "Controller" // NSViewController or NSWindowController
         }
     }
-    
+
     var storyboardInstantiationInfo: [(String /* Signature type */, String /* Return type */)] {
         switch self {
         case .iOS, .tvOS:
@@ -127,7 +127,7 @@ extension OS {
             return [("Controller", "NSWindowController"), ("Controller", "NSViewController")]
         }
     }
-    
+
     var viewType: String {
         switch self {
         case .iOS, .tvOS:
@@ -136,7 +136,7 @@ extension OS {
             return "NSView"
         }
     }
-    
+
     var colorType: String {
         switch self {
         case .iOS, .tvOS:
@@ -145,7 +145,7 @@ extension OS {
             return "NSColor"
         }
     }
-    
+
     var colorNameType: String {
         switch self {
         case .iOS, .tvOS:
@@ -154,7 +154,7 @@ extension OS {
             return "NSColor.Name"
         }
     }
-    
+
     var colorOS: String {
         switch self {
         case .iOS:
@@ -165,7 +165,7 @@ extension OS {
             return "macOS 10.13"
         }
     }
-    
+
     var resuableViews: [String]? {
         switch self {
         case .iOS, .tvOS:
@@ -174,7 +174,7 @@ extension OS {
             return nil
         }
     }
-    
+
     func controllerType(for name: String) -> String? {
         switch self {
         case .iOS, .tvOS:
@@ -219,5 +219,5 @@ extension OS {
             }
         }
     }
-    
+
 }
