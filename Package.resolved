@@ -83,6 +83,15 @@
         }
       },
       {
+        "package": "XcodeProjKit",
+        "repositoryURL": "https://github.com/phimage/XcodeProjKit.git",
+        "state": {
+          "branch": "2.0.0",
+          "revision": "df370737d2dab5c744d3f136f83e26c5244920c6",
+          "version": null
+        }
+      },
+      {
         "package": "Yams",
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {

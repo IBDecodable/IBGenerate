@@ -13,8 +13,13 @@ public class CodeBuilder {
     public init() {}
 
     public func code(workDirectory: URL, config: Config) -> String {
-        let storyboards = lintablePaths(workDirectory: workDirectory, config: config)
-        return code(files: storyboards, config: config)
+        let files: Set<URL>
+        if config.xcodeTarget {
+            files = Xcode.get(workDirectory: workDirectory)
+        } else {
+            files = lintablePaths(workDirectory: workDirectory, config: config)
+        }
+        return code(files: files, config: config)
     }
 
     public func code(files: Set<URL>, config: Config) -> String {

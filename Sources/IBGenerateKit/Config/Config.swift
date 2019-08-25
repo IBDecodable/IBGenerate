@@ -13,12 +13,14 @@ public struct Config: Codable {
     public let included: [String]
     public let color: Bool
     public let imports: [String]
+    public let xcodeTarget: Bool
 
     enum CodingKeys: String, CodingKey {
         case excluded
         case included
         case color
         case imports
+        case xcodeTarget
     }
 
     public static let fileName = ".ibgenerate.yml"
@@ -29,13 +31,15 @@ public struct Config: Codable {
         included = []
         color = true
         imports = []
+        xcodeTarget = false
     }
 
-    init(excluded: [String] = [], included: [String] = [], color: Bool = true, imports: [String] = []) {
+    init(excluded: [String] = [], included: [String] = [], color: Bool = true, imports: [String] = [], xcodeTarget: Bool = false) {
         self.excluded = excluded
         self.included = included
         self.color = color
         self.imports = imports
+        self.xcodeTarget = xcodeTarget
     }
 
     public init(from decoder: Decoder) throws {
@@ -44,6 +48,7 @@ public struct Config: Codable {
         included = try container.decodeIfPresent(Optional<[String]>.self, forKey: .included).flatMap { $0 } ?? []
         color = try container.decodeIfPresent(Optional<Bool>.self, forKey: .color).flatMap { $0 } ?? true
         imports = try container.decodeIfPresent(Optional<[String]>.self, forKey: .imports).flatMap { $0 } ?? []
+        xcodeTarget = try container.decodeIfPresent(Optional<Bool>.self, forKey: .xcodeTarget).flatMap { $0 } ?? false
     }
 
     public init(url: URL) throws {
