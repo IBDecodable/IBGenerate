@@ -1,8 +1,12 @@
 included:
 - Sources
 line_length:
-  warning: 165
+  warning: 250
+  error: 300
   ignores_comments: true
+function_body_length:
+  warning: 250
+  error: 300
 large_tuple:
   warning: 3
 disabled_rules:

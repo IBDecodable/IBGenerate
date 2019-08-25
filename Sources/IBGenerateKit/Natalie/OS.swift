@@ -22,8 +22,8 @@ extension OS {
     }
 
     enum Framework: String {
-        case UIKit = "UIKit"
-        case Cocoa = "Cocoa"
+        case UIKit
+        case Cocoa
 
         init(os: OS) {
             switch os {
