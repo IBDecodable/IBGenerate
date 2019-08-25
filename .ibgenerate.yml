@@ -1,3 +1,6 @@
 included:
 - ".build/checkouts/IBDecodable"
 - "Tests"
+color: false
+imports:
+- "CoreData"

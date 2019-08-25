@@ -20,7 +20,7 @@ public class CodeBuilder {
     public func code(files: Set<URL>, config: Config) -> String {
         return files.compactMap { path in
             return try? StoryboardFile(path: path.relativePath)
-        }.code()
+            }.code(config: config)
     }
 
     private struct InterfaceBuilderFiles {
@@ -80,7 +80,7 @@ public class CodeBuilder {
 }
 
 extension Array where Element == StoryboardFile {
-    func code() -> String {
-        return Natalie.process(storyboards: self)
+    func code(config: Config) -> String {
+        return Natalie.process(storyboards: self, config: config)
     }
 }

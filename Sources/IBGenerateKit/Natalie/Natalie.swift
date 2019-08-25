@@ -22,17 +22,19 @@ struct Natalie {
 
     let storyboards: [StoryboardFile]
     let header = Header()
+    let config: Config
 
     var storyboardCustomModules: Set<String> {
         return Set(storyboards.lazy.flatMap { $0.document.customModules })
     }
 
-    init(storyboards: [StoryboardFile]) {
+    init(storyboards: [StoryboardFile], config: Config) {
         self.storyboards = storyboards
+        self.config = config
         assert(Set(storyboards.map { $0.document.targetRuntime.os }).count < 2)
     }
 
-    static func process(storyboards: [StoryboardFile]) -> String {
+    static func process(storyboards: [StoryboardFile], config: Config) -> String {
         var output = String()
         for os in OS.allValues {
             let storyboardsForOS = storyboards.filter { $0.document.targetRuntime.os == os }
@@ -42,7 +44,7 @@ struct Natalie {
                     output += "#if os(\(os.rawValue))\n"
                 }
 
-                output += Natalie(storyboards: storyboardsForOS).process(os: os)
+                output += Natalie(storyboards: storyboardsForOS, config: config).process(os: os)
 
                 if storyboardsForOS.count != storyboards.count {
                     output += "#endif\n"
@@ -58,7 +60,7 @@ struct Natalie {
         output += header.description
         output += "import \(os.framework)\n"
         output += "import IBStoryboard\n"
-        for module in storyboardCustomModules {
+        for module in Set(storyboardCustomModules + config.imports) {
             output += "import \(module)\n"
         }
         output += "\n"
@@ -71,26 +73,28 @@ struct Natalie {
         output += "}\n"
         output += "\n"
 
-        let colors = storyboards
-            .flatMap { $0.document.colors }
-            .filter {
-                switch $0 {
-                case .systemColor:
-                    return false
-                default:
-                    return true
+        if config.color {
+            let colors = storyboards
+                .flatMap { $0.document.colors }
+                .filter {
+                    switch $0 {
+                    case .systemColor:
+                        return false
+                    default:
+                        return true
+                    }
                 }
+                .compactMap { $0.assetName }
+            if !colors.isEmpty {
+                output += "// MARK: - Colors\n"
+                output += "@available(\(os.colorOS), *)\n"
+                output += "extension \(os.colorType) {\n"
+                for colorName in Set(colors) {
+                    output += "    static let \(swiftRepresentation(for: colorName, firstLetter: .none)) = \(os.colorType)(named: \(initIdentifier(for: os.colorNameType, value: colorName)))\n"
+                }
+                output += "}\n"
+                output += "\n"
             }
-            .compactMap { $0.assetName }
-        if !colors.isEmpty {
-            output += "// MARK: - Colors\n"
-            output += "@available(\(os.colorOS), *)\n"
-            output += "extension \(os.colorType) {\n"
-            for colorName in Set(colors) {
-                output += "    static let \(swiftRepresentation(for: colorName, firstLetter: .none)) = \(os.colorType)(named: \(initIdentifier(for: os.colorNameType, value: colorName)))\n"
-            }
-            output += "}\n"
-            output += "\n"
         }
 
         let storyboardModules = storyboardCustomModules
