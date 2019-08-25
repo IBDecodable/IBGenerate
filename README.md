@@ -38,7 +38,7 @@ extension MyViewController {
 Enum that you can use with `IBStoryboard` function
 
 ```swift
-self.performSegue(self.performSegue(MainViewController.Segue.segueToFirst, sender:nil), sender:nil)
+self.performSegue(MainViewController.Segue.segueToFirst, sender:nil)
 ```
 
 ### Enumeration for named colors
