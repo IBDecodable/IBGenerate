@@ -21,7 +21,7 @@ dependencies: [
 
 ```
 
-_/!\_ ibgenerate work only for `iOS` for the moment.
+:warning: ibgenerate work only for `iOS` for the moment.
 
 ## What the command generate exactly?
 
